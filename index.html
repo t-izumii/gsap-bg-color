@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>背景色を変えるgsap</title>
+</head>
+<style>
+    section{
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: red;
+    }
+    .filter {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: transparent;
+        transition: 0.3s background-color;
+
+    }
+</style>
+<body>
+    <div class="filter"></div>
+    <section class="gsap-section" data-filter="transparent"><h1>さんぷる</h1></section>
+    <section class="gsap-section" data-filter="black"></section>
+    <section class="gsap-section" data-filter="white"></section>
+    <section class="gsap-section" data-filter="black"></section>
+    <section class="gsap-section" data-filter="white"></section>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.0/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.0/ScrollTrigger.min.js"></script>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+        const sections = document.querySelectorAll('section');
+        const filter = document.querySelector('.filter');
+
+        let baseColor = null;
+
+        sections.forEach((section, index, sections) => {
+            const dataFilter = section.dataset.filter;
+            const next = sections[index + 1];
+            const prev = sections[index - 1];
+
+            let tl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: section,
+                    start: 'top center',
+                    end: 'bottom center',
+                    markers: true,
+                    onEnter: () => {
+                        baseColor = prev ? prev.dataset.filter : sections[sections.length - 1].dataset.filter;
+                        gsap.to(filter, { backgroundColor: dataFilter });
+                    },
+                    onLeave: () => {
+                        baseColor = next ? next.dataset.filter : sections[0].dataset.filter;
+                        gsap.to(filter, { backgroundColor: baseColor });
+                    },
+                    onEnterBack: () => {
+                        baseColor = next ? next.dataset.filter : sections[0].dataset.filter;
+                        gsap.to(filter, { backgroundColor: dataFilter });
+                    },
+                    onLeaveBack: () => {
+                        baseColor = prev ? prev.dataset.filter : sections[sections.length - 1].dataset.filter;
+                        gsap.to(filter, { backgroundColor: baseColor });
+                    },
+                }
+            });
+            tl.fromTo(filter,
+            {
+                backgroundColor: baseColor || dataFilter,
+            },
+            {
+                backgroundColor: dataFilter,
+            })
+        })
+
+    </script>
+</body>
+</html>
