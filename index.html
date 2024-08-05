@@ -40,14 +40,8 @@
         gsap.registerPlugin(ScrollTrigger);
         const sections = document.querySelectorAll('section');
         const filter = document.querySelector('.filter');
-
-        let baseColor = null;
-
         sections.forEach((section, index, sections) => {
             const dataFilter = section.dataset.filter;
-            const next = sections[index + 1];
-            const prev = sections[index - 1];
-
             let tl = gsap.timeline({
                 scrollTrigger: {
                     trigger: section,
@@ -55,30 +49,13 @@
                     end: 'bottom center',
                     markers: true,
                     onEnter: () => {
-                        baseColor = prev ? prev.dataset.filter : sections[sections.length - 1].dataset.filter;
                         gsap.to(filter, { backgroundColor: dataFilter });
-                    },
-                    onLeave: () => {
-                        baseColor = next ? next.dataset.filter : sections[0].dataset.filter;
-                        gsap.to(filter, { backgroundColor: baseColor });
                     },
                     onEnterBack: () => {
-                        baseColor = next ? next.dataset.filter : sections[0].dataset.filter;
                         gsap.to(filter, { backgroundColor: dataFilter });
-                    },
-                    onLeaveBack: () => {
-                        baseColor = prev ? prev.dataset.filter : sections[sections.length - 1].dataset.filter;
-                        gsap.to(filter, { backgroundColor: baseColor });
                     },
                 }
             });
-            tl.fromTo(filter,
-            {
-                backgroundColor: baseColor || dataFilter,
-            },
-            {
-                backgroundColor: dataFilter,
-            })
         })
 
     </script>
